@@ -10,11 +10,6 @@ class board
 {
 private:
     /// <summary>
-    /// Randomness of rows,cols and direction
-    /// </summary>
-    const int ShuffleSize = 50;
-
-    /// <summary>
     /// possible directions
     /// </summary>
     enum

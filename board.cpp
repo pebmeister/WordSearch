@@ -32,7 +32,7 @@ bool board::word_fits(std::string word, int row, int col, int direction)
 }
 
 /// <summary>
-/// create a vector 0 - sz in randowm order
+/// create a vector 0 - sz in random order
 /// </summary>
 /// <param name="sz">size of vector</param>
 /// <returns>random order vector 0 - sz</returns>
@@ -42,7 +42,7 @@ std::vector<int> board::create_shuffle_array(int sz) const
     for (auto i = 0; i < sz; ++i)
         arr[i] = i;
 
-    for (auto i = 0; i < ShuffleSize; ++i)
+    for (auto i = 0; i < sz * 2; ++i)
     {
         auto a = rand() % (sz / 2);
         auto b = rand() % (sz / 2) + (a + 1);

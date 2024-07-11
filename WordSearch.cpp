@@ -30,21 +30,21 @@ int main(int argc, char* args[])
         {
             if (rows_specified)
             {
-                std::cout << "Number of rows specified more than once" << std::endl;
+                std::cout << "Number of rows specified more than once." << std::endl;
                 return -1;
             }
             rows_specified = true;
             ++curarg;
             if (curarg >= argc)
             {
-                std::cout << "Missing row count for -r" << std::endl;
+                std::cout << "Missing row count for -r." << std::endl;
                 return -1;
             }
             rows = atoi(args[curarg]);
             ++curarg;
             if (rows <= 0)
             {
-                std::cout << "Invalid rows count for -r" << std::endl;
+                std::cout << "Invalid rows count for -r." << std::endl;
                 return -1;
             }
             continue;
@@ -55,21 +55,21 @@ int main(int argc, char* args[])
         {
             if (cols_specified)
             {
-                std::cout << "Number of columns specified more than once" << std::endl;
+                std::cout << "Number of columns specified more than once." << std::endl;
                 return -1;
             }
             cols_specified = true;
             ++curarg;
             if (curarg >= argc)
             {
-                std::cout << "Missing column count for -c" << std::endl;
+                std::cout << "Missing column count for -c." << std::endl;
                 return -1;
             }
             cols = atoi(args[curarg]);
             ++curarg;
             if (cols <= 0)
             {
-                std::cout << "Invalid column count for -c" << std::endl;
+                std::cout << "Invalid column count for -c." << std::endl;
                 return -1;
             }
             continue;
@@ -103,7 +103,7 @@ int main(int argc, char* args[])
     {
         if (!b->add_word(word))
         {
-            std::cout << "word " << word << " does not fit" << std::endl;
+            std::cout << "Word " << word << " does not fit." << std::endl;
             return -1;
         }
     }
