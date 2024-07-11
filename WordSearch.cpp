@@ -108,7 +108,7 @@ int main(int argc, char* args[])
         }
     }
 
-    // fill empty soaces
+    // fill empty spaces
     b->fill();
 
     // print board
