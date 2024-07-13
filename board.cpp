@@ -1,6 +1,7 @@
 // Written by Paul Baxter
 
 #include <tuple>
+#include <iomanip>
 #include "board.h"
 
 /// <summary>
@@ -24,8 +25,8 @@ bool board::word_fits(std::string word, int row, int col, int direction)
         if (ch != exisiting_char && exisiting_char != ' ')
             return false;
 
-        row += std::get<0>(directions[direction]);
-        col += std::get<1>(directions[direction]);
+        row += std::get<xoffset>(direction_offsets[direction]);
+        col += std::get<yoffset>(direction_offsets[direction]);
     }
 
     return true;
@@ -98,8 +99,9 @@ bool board::add_word(std::string& word)
 {
     std::vector<int> row_numbers = create_shuffle_array(num_rows);
     std::vector<int> col_numbers = create_shuffle_array(num_cols);
-    std::vector<int> direction_numbers = create_shuffle_array((int)directions.size());
+    std::vector<int> direction_numbers = create_shuffle_array((int)direction_offsets.size());
 
+    Words.push_back(word);
     for (auto r : row_numbers)
         for (auto c : col_numbers)
             for (auto d : direction_numbers)
@@ -110,14 +112,23 @@ bool board::add_word(std::string& word)
                     {
                         field[r][c] = ch;
 
-                        r += std::get<0>(directions[d]);
-                        c += std::get<1>(directions[d]);
+                        r += std::get<xoffset>(direction_offsets[d]);
+                        c += std::get<yoffset>(direction_offsets[d]);
                     }
                     return true;
                 }
             }
 
     return false;
+}
+
+/// <summary>
+/// Set the title of the puzzle
+/// </summary>
+/// <param name="title"></param>
+void board::set_title(std::string& title)
+{
+    Title = title;
 }
 
 /// <summary>
@@ -136,4 +147,37 @@ void board::fill()
             }
         }
     }
+}
+
+/// <summary>
+/// print the board
+/// </summary>
+void board::print()
+{
+    // print board
+    std::cout << std::endl << ' ' << Title << std::endl << std::endl;
+
+    for (auto& r : field)
+    {
+        for (auto& c : r)
+        {
+            std::cout << ' ' << c;
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+
+    //  print the words
+    int count = 0;
+    for (auto& word : Words)
+    {
+        if (count == 5)
+        {
+            std::cout << std::endl;
+            count = 0;
+        }
+        count++;
+        std::cout << std::setw(10) << word;
+    }
+    std::cout << std::endl;
 }

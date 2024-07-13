@@ -9,10 +9,13 @@
 class board
 {
 private:
+    std::vector<std::string> Words;
+    std::string Title;
+
     /// <summary>
     /// possible directions
     /// </summary>
-    enum
+    enum Direction
     {
         up,
         down,
@@ -24,10 +27,16 @@ private:
         down_right_diagnal
     };
 
+    enum
+    {
+        xoffset = 0,
+        yoffset = 1
+    };
+
     /// <summary>
     /// x y increments for directions
     /// </summary>
-    std::vector<std::tuple<int, int>> directions =
+    std::vector<std::tuple<int, int>> direction_offsets =
     {
         {  0, -1 },  //  up
         {  0,  1 },  //  down
@@ -60,5 +69,7 @@ public:
     board(int rows, int cols);
     bool add_words(std::vector<std::string> words);
     bool add_word(std::string& word);
+    void set_title(std::string& title);
+    void print();
     void fill();
 };
