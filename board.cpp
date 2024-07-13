@@ -5,56 +5,6 @@
 #include "board.h"
 
 /// <summary>
-/// check if word can be added at given row column and direction
-/// </summary>
-/// <param name="word">word to add</param>
-/// <param name="row">row for word</param>
-/// <param name="col">column for word</param>
-/// <param name="direction">direction word should go</param>
-/// <returns>true if word fits</returns>
-bool board::word_fits(std::string word, int row, int col, int direction)
-{
-    for (auto ch : word)
-    {
-        if (row < 0 || row >= num_rows)
-            return false;
-        if (col < 0 || col >= num_cols)
-            return false;
-
-        auto exisiting_char = field[row][col];
-        if (ch != exisiting_char && exisiting_char != ' ')
-            return false;
-
-        row += std::get<xoffset>(direction_offsets[direction]);
-        col += std::get<yoffset>(direction_offsets[direction]);
-    }
-
-    return true;
-}
-
-/// <summary>
-/// create a vector 0 - sz in random order
-/// </summary>
-/// <param name="sz">size of vector</param>
-/// <returns>random order vector 0 - sz</returns>
-std::vector<int> board::create_shuffle_array(int sz) const
-{
-    std::vector<int> arr(sz);
-    for (auto i = 0; i < sz; ++i)
-        arr[i] = i;
-
-    auto m = sz >> 1;
-    for (auto i = 0; i < sz; ++i)
-    {
-        auto a = rand() % m;
-        auto b = rand() % ((sz - a -1)) + a;
-
-        std::swap(arr[a], arr[b]);
-    }
-    return arr;
-}
-
-/// <summary>
 /// board constructor
 /// set rows cols and initialize field
 /// </summary>
@@ -78,7 +28,7 @@ board::board(int rows, int cols)
 }
 
 /// <summary>
-/// Add a word to the field
+/// Add words to the field
 /// </summary>
 /// <param name="word">word to add</param>
 /// <returns>true if word fits</returns>
@@ -112,14 +62,64 @@ bool board::add_word(std::string& word)
                     {
                         field[r][c] = ch;
 
-                        r += std::get<xoffset>(direction_offsets[d]);
-                        c += std::get<yoffset>(direction_offsets[d]);
+                        r += std::get<row_offset>(direction_offsets[d]);
+                        c += std::get<column_offset>(direction_offsets[d]);
                     }
                     return true;
                 }
             }
 
     return false;
+}
+
+/// <summary>
+/// check if word can be added at given row column and direction
+/// </summary>
+/// <param name="word">word to add</param>
+/// <param name="row">row for word</param>
+/// <param name="col">column for word</param>
+/// <param name="direction">direction word should go</param>
+/// <returns>true if word fits</returns>
+bool board::word_fits(std::string word, int row, int col, int direction)
+{
+    for (auto ch : word)
+    {
+        if (row < 0 || row >= num_rows)
+            return false;
+        if (col < 0 || col >= num_cols)
+            return false;
+
+        auto exisiting_char = field[row][col];
+        if (ch != exisiting_char && exisiting_char != ' ')
+            return false;
+
+        row += std::get<row_offset>(direction_offsets[direction]);
+        col += std::get<column_offset>(direction_offsets[direction]);
+    }
+
+    return true;
+}
+
+/// <summary>
+/// create a vector 0 - sz in random order
+/// </summary>
+/// <param name="sz">size of vector</param>
+/// <returns>random order vector 0 - sz</returns>
+std::vector<int> board::create_shuffle_array(int sz) const
+{
+    std::vector<int> arr(sz);
+    for (auto i = 0; i < sz; ++i)
+        arr[i] = i;
+
+    auto m = sz >> 1;
+    for (auto i = 0; i < sz; ++i)
+    {
+        auto a = rand() % m;
+        auto b = rand() % ((sz - a -1)) + a;
+
+        std::swap(arr[a], arr[b]);
+    }
+    return arr;
 }
 
 /// <summary>

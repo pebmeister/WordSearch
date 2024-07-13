@@ -29,12 +29,12 @@ private:
 
     enum
     {
-        xoffset = 0,
-        yoffset = 1
+        row_offset = 0,
+        column_offset = 1
     };
 
     /// <summary>
-    /// x y increments for directions
+    /// row column increments for directions
     /// </summary>
     std::vector<std::tuple<int, int>> direction_offsets =
     {
