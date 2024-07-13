@@ -58,6 +58,7 @@ public:
     std::vector<std::vector<char>> field;
 
     board(int rows, int cols);
-    bool add_word(std::string word);
+    bool add_words(std::vector<std::string> words);
+    bool add_word(std::string& word);
     void fill();
 };

@@ -1,25 +1,59 @@
 // WordSearch.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
-
 // Written by Paul Baxter
 
 #include <iostream>
 #include <iomanip>
-
 #include <vector>
+
 #include "board.h"
 
+int parse_args(int argc, char* args[]);
+void print(board* b);
+
+// default rows and cols
+int Rows = 5;
+int Cols = 5;
+std::vector<std::string> Words;
+
+/// <summary>
+/// Main entry point
+/// </summary>
+/// <param name="argc">argument count</param>
+/// <param name="args">arguments</param>
+/// <returns>0 on success</returns>
 int main(int argc, char* args[])
 {
-    // default rows and cols
-    int rows = 5;
-    int cols = 5;
-    // vector to hold words
-    std::vector<std::string> words;
+    // parse the arguments
+    if (parse_args(argc, args) != 0)
+        return -1;
+    
+    // create a new board
+    auto b = new board(Rows, Cols);
+    if (!b->add_words(Words))
+    {
+        std::cout << "Words do not fit it puzzle. Try adding rows or columns." << std::endl;
+        return -1;
+    }
 
-    // for command line validation
-    bool rows_specified = false;
-    bool cols_specified = false;
+    // fill empty spaces
+    b->fill();
+
+    // print the board
+    print(b);
+    return 0;
+}
+
+/// <summary>
+/// parse the arguments
+/// </summary>
+/// <param name="argc">argument count</param>
+/// <param name="args">arguments</param>
+/// <returns>0 on success</returns>
+int parse_args(int argc, char* args[])
+{
+    auto rows_specified = false;
+    auto cols_specified = false;
 
     // set current argument to 1
     auto curarg = 1;
@@ -40,9 +74,9 @@ int main(int argc, char* args[])
                 std::cout << "Missing row count for -r." << std::endl;
                 return -1;
             }
-            rows = atoi(args[curarg]);
+            Rows = atoi(args[curarg]);
             ++curarg;
-            if (rows <= 0)
+            if (Rows <= 0)
             {
                 std::cout << "Invalid rows count for -r." << std::endl;
                 return -1;
@@ -65,9 +99,9 @@ int main(int argc, char* args[])
                 std::cout << "Missing column count for -c." << std::endl;
                 return -1;
             }
-            cols = atoi(args[curarg]);
+            Cols = atoi(args[curarg]);
             ++curarg;
-            if (cols <= 0)
+            if (Cols <= 0)
             {
                 std::cout << "Invalid column count for -c." << std::endl;
                 return -1;
@@ -81,12 +115,12 @@ int main(int argc, char* args[])
         for (auto i = 0; args[curarg][i] != 0; ++i)
             temp += args[curarg][i];
 
-        words.push_back(temp);
+        Words.push_back(temp);
         ++curarg;
     }
 
     // make sure we have at lease one word
-    if (words.size() == 0)
+    if (Words.size() == 0)
     {
         std::cout << "No words specified for puzzle" << std::endl;
         std::cout << "Usage:" << std::endl;
@@ -94,25 +128,20 @@ int main(int argc, char* args[])
         std::cout << args[0] << " [-r rows] [-c cols] word1 word2 word3 ..." << std::endl;
         return -1;
     }
-    std::cout << std::endl;
-    
-    // create a new board
-    auto b = new board(rows, cols);
-    // add words one at a time
-    for (auto& word : words)
-    {
-        if (!b->add_word(word))
-        {
-            std::cout << "Word " << word << " does not fit." << std::endl;
-            return -1;
-        }
-    }
 
-    // fill empty spaces
-    b->fill();
+    return 0;
+}
 
+/// <summary>
+/// print the board
+/// </summary>
+/// <param name="b">board *</param>
+void print(board* b)
+{
     // print board
-    for (auto &r : b->field)
+    std::cout << std::endl << " Puzzle" << std::endl << std::endl;
+
+    for (auto& r : b->field)
     {
         for (auto& c : r)
         {
@@ -124,7 +153,7 @@ int main(int argc, char* args[])
 
     //  print the words
     int count = 0;
-    for (auto& word : words)
+    for (auto& word : Words)
     {
         if (count == 5)
         {
@@ -135,5 +164,4 @@ int main(int argc, char* args[])
         std::cout << std::setw(10) << word;
     }
     std::cout << std::endl;
-    return 0;
 }

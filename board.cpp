@@ -25,7 +25,7 @@ bool board::word_fits(std::string word, int row, int col, int direction)
             return false;
 
         row += std::get<0>(directions[direction]);
-        col += std::get<1>(directions[direction]);       
+        col += std::get<1>(directions[direction]);
     }
 
     return true;
@@ -42,14 +42,13 @@ std::vector<int> board::create_shuffle_array(int sz) const
     for (auto i = 0; i < sz; ++i)
         arr[i] = i;
 
-    for (auto i = 0; i < sz * 2; ++i)
+    auto m = sz >> 1;
+    for (auto i = 0; i < sz; ++i)
     {
-        auto a = rand() % (sz / 2);
-        auto b = rand() % (sz / 2) + (a + 1);
+        auto a = rand() % m;
+        auto b = rand() % ((sz - a -1)) + a;
 
-        auto t = arr[a];
-        arr[a] = arr[b];
-        arr[b] = t;
+        std::swap(arr[a], arr[b]);
     }
     return arr;
 }
@@ -82,7 +81,20 @@ board::board(int rows, int cols)
 /// </summary>
 /// <param name="word">word to add</param>
 /// <returns>true if word fits</returns>
-bool board::add_word(std::string word)
+bool board::add_words(std::vector<std::string> words)
+{
+    for (auto& word : words)
+        if (!add_word(word))
+            return false;
+    return true;
+}
+
+/// <summary>
+/// Add a word to the field
+/// </summary>
+/// <param name="word">word to add</param>
+/// <returns>true if word fits</returns>
+bool board::add_word(std::string& word)
 {
     std::vector<int> row_numbers = create_shuffle_array(num_rows);
     std::vector<int> col_numbers = create_shuffle_array(num_cols);
