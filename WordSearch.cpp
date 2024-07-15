@@ -25,12 +25,26 @@ int main(int argc, char* args[])
 {
     // parse the arguments
     if (parse_args(argc, args) != 0)
-        return -1;    
+        return -1;
 
-    // create a new board
-    board b(Rows, Cols, Words, Title);
-    b.print();
-    return 0;
+    std::string error;
+    for (auto t = 0; t < 3; t++)
+    {
+        try
+        {
+            // create a new board
+            board b(Rows, Cols, Words, Title);
+            b.print();
+            return 0;
+        }
+        catch (const std::exception& ex)
+        {
+            error = ex.what();
+        }
+    }
+
+    std::cout << error << std::endl;
+    return -1;
 }
 
 /// <summary>

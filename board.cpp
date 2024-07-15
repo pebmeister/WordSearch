@@ -30,18 +30,13 @@ board::board(int rows, int cols, std::vector<std::string>& words, std::string ti
     {
         field.push_back(std::vector<char>());
         for (auto col = 0; col < Num_cols; ++col)
-        {
             field[row].push_back(' ');
-        }
     }
 
     if (add_words())
         fill();
     else
-    {
-        std::cout << "Error creating puzzle." << std::endl;
-        exit(-1);
-    }
+        throw std::exception("Error creating puzzle. Try adding rows or columns.");
 }
 
 /// <summary>
@@ -184,7 +179,6 @@ void board::print_field()
         std::cout << std::endl;
     }
     std::cout << std::endl;
-
 }
 
 /// <summary>
