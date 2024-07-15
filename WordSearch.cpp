@@ -28,19 +28,7 @@ int main(int argc, char* args[])
         return -1;    
 
     // create a new board
-    board b(Rows, Cols);
-    b.set_title(Title);
-    if (!b.add_words(Words))
-    {
-        std::cout << "Words do not fit it puzzle. Try adding rows or columns." << std::endl;
-        Useage();
-        return -1;
-    }
-
-    // fill empty spaces
-    b.fill();
-
-    // print the board
+    board b(Rows, Cols, Words, Title);
     b.print();
     return 0;
 }

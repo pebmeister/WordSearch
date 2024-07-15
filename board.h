@@ -9,9 +9,6 @@
 class board
 {
 private:
-    std::vector<std::string> Words;
-    std::string Title;
-
     /// <summary>
     /// possible directions
     /// </summary>
@@ -33,10 +30,13 @@ private:
         column_offset = 1
     };
 
+    std::vector<std::string> Words;
+    std::string Title;
+
     /// <summary>
     /// row column increments for directions
     /// </summary>
-    std::vector<std::tuple<int, int>> direction_offsets =
+    std::vector<std::tuple<int, int>> Direction_offsets =
     {
         {  0, -1 },  //  up
         {  0,  1 },  //  down
@@ -48,28 +48,30 @@ private:
         {  1,  1 },  //  down_right_diagnal
     };
 
-    bool word_fits(std::string word, int x, int y, int direction);
-    std::vector<int> create_shuffle_array(int sz) const;
-
-public:
     /// <summary>
     /// number of rows
     /// </summary>
-    int num_rows;
+    int Num_rows;
+
     /// <summary>
     /// number of columns
     /// </summary>
-    int num_cols;
+    int Num_cols;
 
+    bool word_fits(std::string word, int x, int y, Direction direction);
+    bool add_words();
+    bool add_word(std::string& word);
+    void fill();
+    std::vector<int> create_shuffled_array(int sz) const;
+    void print_field();
+    void print_words();
+
+public:
     /// <summary>
     /// field of chars
     /// </summary>
     std::vector<std::vector<char>> field;
 
-    board(int rows, int cols);
-    bool add_words(std::vector<std::string> words);
-    bool add_word(std::string& word);
-    void set_title(std::string& title);
+    board(int rows, int cols, std::vector<std::string>& words, std::string title);
     void print();
-    void fill();
 };

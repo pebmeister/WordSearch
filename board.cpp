@@ -2,6 +2,7 @@
 
 #include <tuple>
 #include <iomanip>
+
 #include "board.h"
 
 /// <summary>
@@ -10,20 +11,36 @@
 /// </summary>
 /// <param name="rows">number of rows</param>
 /// <param name="cols">number of cols</param>
-board::board(int rows, int cols)
+/// <param name="words">vector of words for puzzle </param>
+/// <param name="title">title for puzzle</param>
+board::board(int rows, int cols, std::vector<std::string>& words, std::string title)
 {
     srand((int)time(0));
+    Words.clear();
 
-    num_rows = rows;
-    num_cols = cols;
+    Num_rows = rows;
+    Num_cols = cols;
 
-    for (auto row = 0; row < num_rows; ++row)
+    for (auto& word : words)
+        Words.push_back(word);
+    
+    Title = title;
+
+    for (auto row = 0; row < Num_rows; ++row)
     {
         field.push_back(std::vector<char>());
-        for (auto col = 0; col < num_cols; ++col)
+        for (auto col = 0; col < Num_cols; ++col)
         {
             field[row].push_back(' ');
         }
+    }
+
+    if (add_words())
+        fill();
+    else
+    {
+        std::cout << "Error creating puzzle." << std::endl;
+        exit(-1);
     }
 }
 
@@ -32,9 +49,9 @@ board::board(int rows, int cols)
 /// </summary>
 /// <param name="word">word to add</param>
 /// <returns>true if word fits</returns>
-bool board::add_words(std::vector<std::string> words)
+bool board::add_words()
 {
-    for (auto& word : words)
+    for (auto& word : Words)
         if (!add_word(word))
             return false;
     return true;
@@ -47,23 +64,25 @@ bool board::add_words(std::vector<std::string> words)
 /// <returns>true if word fits</returns>
 bool board::add_word(std::string& word)
 {
-    std::vector<int> row_numbers = create_shuffle_array(num_rows);
-    std::vector<int> col_numbers = create_shuffle_array(num_cols);
-    std::vector<int> direction_numbers = create_shuffle_array((int)direction_offsets.size());
+    std::vector<int> row_numbers = create_shuffled_array(Num_rows);
+    std::vector<int> col_numbers = create_shuffled_array(Num_cols);
+    std::vector<int> direction_numbers = create_shuffled_array((int)Direction_offsets.size());
 
-    Words.push_back(word);
-    for (auto r : row_numbers)
-        for (auto c : col_numbers)
-            for (auto d : direction_numbers)
+    for (auto& r : row_numbers)
+        for (auto& c : col_numbers)
+            for (auto& d : direction_numbers)
             {
-                if (word_fits(word, r, c, d))
+                if (word_fits(word, r, c, (Direction)d))
                 {
-                    for (auto ch : word)
+                    auto rr = r;
+                    auto cc = c;
+                    for (auto& ch : word)
                     {
-                        field[r][c] = ch;
 
-                        r += std::get<row_offset>(direction_offsets[d]);
-                        c += std::get<column_offset>(direction_offsets[d]);
+                        field[rr][cc] = ch;
+
+                        rr += std::get<row_offset>(Direction_offsets[d]);
+                        cc += std::get<column_offset>(Direction_offsets[d]);
                     }
                     return true;
                 }
@@ -80,21 +99,22 @@ bool board::add_word(std::string& word)
 /// <param name="col">column for word</param>
 /// <param name="direction">direction word should go</param>
 /// <returns>true if word fits</returns>
-bool board::word_fits(std::string word, int row, int col, int direction)
+bool board::word_fits(std::string word, int row, int col, Direction direction)
 {
     for (auto ch : word)
     {
-        if (row < 0 || row >= num_rows)
+        if (row < 0 || row >= Num_rows)
             return false;
-        if (col < 0 || col >= num_cols)
+        if (col < 0 || col >= Num_cols)
             return false;
 
         auto exisiting_char = field[row][col];
         if (ch != exisiting_char && exisiting_char != ' ')
             return false;
 
-        row += std::get<row_offset>(direction_offsets[direction]);
-        col += std::get<column_offset>(direction_offsets[direction]);
+        // now move to next spot in field
+        row += std::get<row_offset>(Direction_offsets[direction]);
+        col += std::get<column_offset>(Direction_offsets[direction]);
     }
 
     return true;
@@ -105,7 +125,7 @@ bool board::word_fits(std::string word, int row, int col, int direction)
 /// </summary>
 /// <param name="sz">size of vector</param>
 /// <returns>random order vector 0 - sz</returns>
-std::vector<int> board::create_shuffle_array(int sz) const
+std::vector<int> board::create_shuffled_array(int sz) const
 {
     std::vector<int> arr(sz);
     for (auto i = 0; i < sz; ++i)
@@ -115,20 +135,11 @@ std::vector<int> board::create_shuffle_array(int sz) const
     for (auto i = 0; i < sz; ++i)
     {
         auto a = rand() % m;
-        auto b = rand() % ((sz - a -1)) + a;
+        auto b = rand() % ((sz - a - 1)) + a;
 
         std::swap(arr[a], arr[b]);
     }
     return arr;
-}
-
-/// <summary>
-/// Set the title of the puzzle
-/// </summary>
-/// <param name="title"></param>
-void board::set_title(std::string& title)
-{
-    Title = title;
 }
 
 /// <summary>
@@ -137,9 +148,9 @@ void board::set_title(std::string& title)
 /// </summary>
 void board::fill()
 {
-    for (auto row = 0; row < num_rows; ++row)
+    for (auto row = 0; row < Num_rows; ++row)
     {
-        for (auto col = 0; col < num_cols; ++col)
+        for (auto col = 0; col < Num_cols; ++col)
         {
             if (field[row][col] == ' ')
             {
@@ -150,13 +161,20 @@ void board::fill()
 }
 
 /// <summary>
-/// print the board
+/// print the puzzle
 /// </summary>
 void board::print()
 {
-    // print board
     std::cout << std::endl << ' ' << Title << std::endl << std::endl;
+    print_field();
+    print_words();
+}
 
+/// <summary>
+/// print the field
+/// </summary>
+void board::print_field()
+{
     for (auto& r : field)
     {
         for (auto& c : r)
@@ -167,6 +185,13 @@ void board::print()
     }
     std::cout << std::endl;
 
+}
+
+/// <summary>
+/// print the words
+/// </summary>
+void board::print_words()
+{
     //  print the words
     int count = 0;
     for (auto& word : Words)
