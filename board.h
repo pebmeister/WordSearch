@@ -30,13 +30,13 @@ private:
         column_offset = 1
     };
 
-    std::vector<std::string> Words;
-    std::string Title;
+    std::vector<std::string> words;
+    std::string title;
 
     /// <summary>
     /// row column increments for directions
     /// </summary>
-    std::vector<std::tuple<int, int>> Direction_offsets =
+    const std::vector<std::tuple<int, int>> direction_offsets =
     {
         {  0, -1 },  //  up
         {  0,  1 },  //  down
@@ -51,14 +51,14 @@ private:
     /// <summary>
     /// number of rows
     /// </summary>
-    int Num_rows;
+    int num_rows;
 
     /// <summary>
     /// number of columns
     /// </summary>
-    int Num_cols;
+    int num_cols;
 
-    bool word_fits(std::string word, int x, int y, Direction direction);
+    bool word_fits(std::string& word, int x, int y, Direction direction);
     bool add_words();
     bool add_word(std::string& word);
     void fill();
@@ -72,6 +72,6 @@ public:
     /// </summary>
     std::vector<std::vector<char>> field;
 
-    board(int rows, int cols, std::vector<std::string>& words, std::string title);
+    board(int rows, int cols, std::vector<std::string>& word_list, std::string title);
     void print();
 };

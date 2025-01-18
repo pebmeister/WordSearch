@@ -11,31 +11,31 @@
 /// </summary>
 /// <param name="rows">number of rows</param>
 /// <param name="cols">number of cols</param>
-/// <param name="words">vector of words for puzzle </param>
-/// <param name="title">title for puzzle</param>
-board::board(int rows, int cols, std::vector<std::string>& words, std::string title)
+/// <param name="word_list">vector of words for puzzle </param>
+/// <param name="puzzle_title">title for puzzle</param>
+board::board(int rows, int cols, std::vector<std::string>& word_list, std::string puzzle_title)
 {
     srand((int)time(0));
-    Words.clear();
+    words.clear();
 
-    Num_rows = rows;
-    Num_cols = cols;
+    num_rows = rows;
+    num_cols = cols;
 
-    for (auto& word : words)
-        Words.push_back(word);
+    for (auto& word : word_list)
+        words.push_back(word);
     
-    Title = title;
+    title = puzzle_title;
 
-    for (auto row = 0; row < Num_rows; ++row)
+    for (auto row = 0; row < num_rows; ++row)
     {
         field.push_back(std::vector<char>());
-        for (auto col = 0; col < Num_cols; ++col)
+        for (auto col = 0; col < num_cols; ++col)
             field[row].push_back(' ');
     }
 
     if (add_words())
         fill();
-    else
+    else 
         throw std::exception("Error creating puzzle. Try adding rows or columns.");
 }
 
@@ -46,10 +46,10 @@ board::board(int rows, int cols, std::vector<std::string>& words, std::string ti
 /// <returns>true if word fits</returns>
 bool board::add_words()
 {
-    for (auto& word : Words)
+    for (auto& word : words)
         if (!add_word(word))
             return false;
-    return true;
+    return true; 
 }
 
 /// <summary>
@@ -59,30 +59,24 @@ bool board::add_words()
 /// <returns>true if word fits</returns>
 bool board::add_word(std::string& word)
 {
-    std::vector<int> row_numbers = create_shuffled_array(Num_rows);
-    std::vector<int> col_numbers = create_shuffled_array(Num_cols);
-    std::vector<int> direction_numbers = create_shuffled_array((int)Direction_offsets.size());
+    auto row_numbers = create_shuffled_array(num_rows);
+    auto col_numbers = create_shuffled_array(num_cols);
+    auto direction_numbers = create_shuffled_array((int)direction_offsets.size());
 
     for (auto& r : row_numbers)
         for (auto& c : col_numbers)
             for (auto& d : direction_numbers)
-            {
-                if (word_fits(word, r, c, (Direction)d))
-                {
+                if (word_fits(word, r, c, (Direction)d)) {
                     auto rr = r;
                     auto cc = c;
-                    for (auto& ch : word)
-                    {
-
+                    for (auto& ch : word) {
                         field[rr][cc] = ch;
 
-                        rr += std::get<row_offset>(Direction_offsets[d]);
-                        cc += std::get<column_offset>(Direction_offsets[d]);
+                        rr += std::get<row_offset>(direction_offsets[d]);
+                        cc += std::get<column_offset>(direction_offsets[d]);
                     }
                     return true;
                 }
-            }
-
     return false;
 }
 
@@ -94,13 +88,12 @@ bool board::add_word(std::string& word)
 /// <param name="col">column for word</param>
 /// <param name="direction">direction word should go</param>
 /// <returns>true if word fits</returns>
-bool board::word_fits(std::string word, int row, int col, Direction direction)
+bool board::word_fits(std::string& word, int row, int col, Direction direction)
 {
-    for (auto ch : word)
-    {
-        if (row < 0 || row >= Num_rows)
+    for (auto& ch : word) {
+        if (row < 0 || row >= num_rows)
             return false;
-        if (col < 0 || col >= Num_cols)
+        if (col < 0 || col >= num_cols)
             return false;
 
         auto exisiting_char = field[row][col];
@@ -108,8 +101,8 @@ bool board::word_fits(std::string word, int row, int col, Direction direction)
             return false;
 
         // now move to next spot in field
-        row += std::get<row_offset>(Direction_offsets[direction]);
-        col += std::get<column_offset>(Direction_offsets[direction]);
+        row += std::get<row_offset>(direction_offsets[direction]);
+        col += std::get<column_offset>(direction_offsets[direction]);
     }
 
     return true;
@@ -127,8 +120,7 @@ std::vector<int> board::create_shuffled_array(int sz) const
         arr[i] = i;
 
     auto m = sz >> 1;
-    for (auto i = 0; i < sz; ++i)
-    {
+    for (auto i = 0; i < sz; ++i) {
         auto a = rand() % m;
         auto b = rand() % ((sz - a - 1)) + a;
 
@@ -143,16 +135,10 @@ std::vector<int> board::create_shuffled_array(int sz) const
 /// </summary>
 void board::fill()
 {
-    for (auto row = 0; row < Num_rows; ++row)
-    {
-        for (auto col = 0; col < Num_cols; ++col)
-        {
+    for (auto row = 0; row < num_rows; ++row)
+        for (auto col = 0; col < num_cols; ++col)
             if (field[row][col] == ' ')
-            {
-                field[row][col] = rand() % 26 + 'A';
-            }
-        }
-    }
+                field[row][col] = (rand() % ('Z' - 'A' + 1)) + 'A';
 }
 
 /// <summary>
@@ -160,7 +146,7 @@ void board::fill()
 /// </summary>
 void board::print()
 {
-    std::cout << std::endl << ' ' << Title << std::endl << std::endl;
+    std::cout << std::endl << ' ' << title << std::endl << std::endl;
     print_field();
     print_words();
 }
@@ -170,10 +156,8 @@ void board::print()
 /// </summary>
 void board::print_field()
 {
-    for (auto& r : field)
-    {
-        for (auto& c : r)
-        {
+    for (auto& r : field) {
+        for (auto& c : r) {
             std::cout << ' ' << c;
         }
         std::cout << std::endl;
@@ -187,11 +171,9 @@ void board::print_field()
 void board::print_words()
 {
     //  print the words
-    int count = 0;
-    for (auto& word : Words)
-    {
-        if (count == 5)
-        {
+    auto count = 0;
+    for (auto& word : words) {
+        if (count == 5) {
             std::cout << std::endl;
             count = 0;
         }
